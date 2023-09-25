@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Helper</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  </head>
+
+  <body>
+    <div class="m-5" id="app">
+      <div>
+        <h1 class="mb-4">Εγγραφές</h1>
+        <!--Add buttons to initiate auth sequence and sign out-->
+        <button class="btn btn-primary" id="authorize_button" onclick="handleAuthClick()">Σύνδεση</button>
+        <button id="signout_button" onclick="handleSignoutClick()">Αποσύνδεση</button>
+      </div>
+
+      <table class="container table table-striped mt-5">
+        <thead class="text-strong">
+          <tr>
+            <th scope="col">Α/Α</th>
+            <th scope="col">Ημ/νία και Ώρα</th>
+            <th scope="col">Όνοματεπώνυμο</th>
+            <th scope="col">Υπεγράφη</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="registrations">
+
+        </tbody>
+
+    </div>
+    <pre id="content" style="white-space: pre-wrap;"></pre>
+
+    </div>
+    <div id="keys" style="display:none" data-google-client-id="%VITE_GOOGLE_CLIENT_ID%" data-api-key="%VITE_API_KEY%">
+    </div>
+
+
+    <script type="text/javascript">
+      document.signedIn = false;
+      const CLIENT_ID = document.getElementById('keys').dataset.googleClientId;
+      const API_KEY = document.getElementById('keys').dataset.apiKey;
+
+      // Discovery doc URL for APIs used by the quickstart
+      const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+      let tokenClient;
+      let gapiInited = false;
+      let gisInited = false;
+
+      document.getElementById('authorize_button').style.visibility = 'hidden';
+      document.getElementById('signout_button').style.visibility = 'hidden';
+
+      /**
+       * Callback after api.js is loaded.
+       */
+      function gapiLoaded() {
+        gapi.load('client', initializeGapiClient);
+      }
+
+      /**
+       * Callback after the API client is loaded. Loads the
+       * discovery doc to initialize the API.
+       */
+      async function initializeGapiClient() {
+        await gapi.client.init({
+          apiKey: API_KEY,
+          discoveryDocs: [DISCOVERY_DOC],
+        });
+        gapiInited = true;
+        maybeEnableButtons();
+      }
+
+      async function saveToken(resp) {
+        console.log(resp);
+      }
+
+      /**
+       * Callback after Google Identity Services are loaded.
+       */
+      function gisLoaded() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          callback: async (resp) => {
+            if (resp.error !== undefined) {
+              throw (resp);
+            }
+            document.getElementById('signout_button').style.visibility = 'visible';
+            document.getElementById('authorize_button').innerText = 'Refresh';
+            document.signedIn = true;
+          }, // defined later
+        });
+        gisInited = true;
+        maybeEnableButtons();
+      }
+
+      /**
+       * Enables user interaction after all libraries are loaded.
+       */
+      function maybeEnableButtons() {
+        if (gapiInited && gisInited) {
+          document.getElementById('authorize_button').style.visibility = 'visible';
+        }
+      }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+      function handleAuthClick() {
+        if (gapi.client.getToken() === null) {
+          // Prompt the user to select a Google Account and ask for consent to share their data
+          // when establishing a new session.
+          tokenClient.requestAccessToken({ prompt: 'consent' });
+        } else {
+          // Skip display of account chooser and consent dialog for an existing session.
+          tokenClient.requestAccessToken({ prompt: '' });
+        }
+      }
+
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+    <script type="module" src="/src/index.js"></script>
+  </body>
+
+</html>
