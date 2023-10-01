@@ -15,6 +15,11 @@ const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 let access_token = null;
 
+export function resetLocalStorage() {
+	localStorage.removeItem('refresh_token');
+	localStorage.removeItem('oauth2-test-params');
+}
+
 /**
  * Callback after the API client is loaded. Loads the
  * discovery doc to initialize the API.
@@ -104,6 +109,10 @@ async function getRefreshToken(code) {
 		setTimeout(refreshToken, (expires_in - 1) * 1000);
 	} catch (e) {
 		console.error(e);
+		if (e.status == 403) {
+			resetLocalStorage();
+			loadAuth();
+		}
 	}
 }
 
@@ -123,6 +132,10 @@ async function getAccessToken() {
 		setTimeout(refreshToken, (expires_in - 1) * 1000);
 	} catch (e) {
 		console.error(e);
+		if (e.status == 403) {
+			resetLocalStorage();
+			loadAuth();
+		}
 	}
 }
 

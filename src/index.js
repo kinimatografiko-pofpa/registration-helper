@@ -3,7 +3,7 @@ import './style.css';
 import genRow from './row.js';
 import printRow from './print.js';
 
-import { loadAuth } from './auth.js';
+import { loadAuth, resetLocalStorage as resetAuth } from './auth.js';
 
 const SIGN_COLUMN = 'S';
 // const isSignedIn = false;
@@ -20,6 +20,11 @@ async function getValues() {
 		return response.result.values;
 	} catch (err) {
 		document.getElementById('content').innerText = err.message;
+		if (err.status == 403) {
+			resetAuth();
+			await loadAuth();
+			await forceUpdateVals();
+		}
 	}
 	// return response.body
 }
@@ -60,6 +65,11 @@ async function sign(e) {
 		await forceUpdateVals();
 	} catch (err) {
 		console.log(err);
+		if (err.status == 403) {
+			resetAuth();
+			await loadAuth();
+			await forceUpdateVals();
+		}
 	}
 }
 
@@ -80,6 +90,11 @@ async function removeSign(e) {
 		await forceUpdateVals();
 	} catch (err) {
 		console.log(err);
+		if (err.status == 403) {
+			resetAuth();
+			await loadAuth();
+			await forceUpdateVals();
+		}
 	}
 }
 
