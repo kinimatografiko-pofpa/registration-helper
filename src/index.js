@@ -58,7 +58,26 @@ async function sign(e) {
 			},
 		});
 		await forceUpdateVals();
-		// console.log(resp);
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+async function removeSign(e) {
+	const row_id = getIdFromEvent(e);
+	const range = `Form Responses 1!${SIGN_COLUMN}${row_id}:${SIGN_COLUMN}${row_id}`;
+	try {
+		let resp = await gapi.client.sheets.spreadsheets.values.update({
+			spreadsheetId: import.meta.env.VITE_SHEET_ID,
+			range: range,
+			valueInputOption: 'USER_ENTERED',
+			resource: {
+				majorDimension: 'ROWS',
+				range: range,
+				values: [['']],
+			},
+		});
+		await forceUpdateVals();
 	} catch (err) {
 		console.log(err);
 	}
@@ -91,6 +110,9 @@ async function handleUpdateVals(v) {
 
 	document.querySelectorAll('.sign-button').forEach((btn) => {
 		btn.onclick = sign;
+	});
+	document.querySelectorAll('.remove-sign-button').forEach((btn) => {
+		btn.onclick = removeSign;
 	});
 	document.querySelectorAll('.print-button').forEach((btn) => {
 		btn.onclick = print;
