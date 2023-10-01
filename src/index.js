@@ -128,20 +128,33 @@ async function handleUpdateVals(v) {
 	});
 }
 
+function setLoadingStatus(status) {
+	document.getElementById('loading-btn').disabled = status;
+	document.getElementById('loading-spinner').style.display = status
+		? 'inline-block'
+		: 'none';
+}
+
 async function updateVals() {
 	if (document.signedIn) {
+		setLoadingStatus(true);
 		let v = await getValues();
 		// if (v.length != values.length + 1 ) {
 		// console.log('New Response!');
-		handleUpdateVals(v);
+		await handleUpdateVals(v);
+		setLoadingStatus(false);
 		// }
 	}
 }
 
 async function forceUpdateVals() {
+	setLoadingStatus(true);
 	let v = await getValues();
-	handleUpdateVals(v);
+	await handleUpdateVals(v);
+	setLoadingStatus(false);
 }
+
+document.getElementById('loading-btn').onclick = forceUpdateVals;
 
 setInterval(updateVals, 3000);
 
