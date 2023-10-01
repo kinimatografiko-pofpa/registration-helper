@@ -1,12 +1,18 @@
 import './style.css';
+// import 'https://apis.google.com/js/api.js';
 import genRow from './row.js';
+import printRow from './print.js';
+
+import { loadAuth } from './auth.js';
+
+const SIGN_COLUMN = 'S';
+// const isSignedIn = false;
 
 let values = [];
 
 async function getValues() {
 	let response;
 	try {
-		// Fetch first 10 files
 		response = await gapi.client.sheets.spreadsheets.values.get({
 			spreadsheetId: import.meta.env.VITE_SHEET_ID,
 			range: 'Form Responses 1',
@@ -14,12 +20,11 @@ async function getValues() {
 		return response.result.values;
 	} catch (err) {
 		document.getElementById('content').innerText = err.message;
-		return;
 	}
 	// return response.body
 }
 
-async function sign(e) {
+function getIdFromEvent(e) {
 	let parent = e.target.parentElement.parentElement; //target is the button element
 
 	if (e.target.nodeName == 'TD')
@@ -28,8 +33,19 @@ async function sign(e) {
 	else if (e.target.nodeName == 'I')
 		//target is the i element
 		parent = e.target.parentElement.parentElement.parentElement;
-	const row_id = parent.dataset.sheetsId;
-	const range = `Form Responses 1!G${row_id}:G${row_id}`;
+
+	return parent.dataset.sheetsId;
+}
+
+async function print(e) {
+	const row_id = getIdFromEvent(e);
+	console.log(values[row_id - 2]);
+	printRow(values[row_id - 2]);
+}
+
+async function sign(e) {
+	const row_id = getIdFromEvent(e);
+	const range = `Form Responses 1!${SIGN_COLUMN}${row_id}:${SIGN_COLUMN}${row_id}`;
 	try {
 		let resp = await gapi.client.sheets.spreadsheets.values.update({
 			spreadsheetId: import.meta.env.VITE_SHEET_ID,
@@ -38,32 +54,49 @@ async function sign(e) {
 			resource: {
 				majorDimension: 'ROWS',
 				range: range,
-				values: [['NEW']],
+				values: [['true']],
 			},
 		});
-		console.log(resp);
+		await forceUpdateVals();
+		// console.log(resp);
 	} catch (err) {
 		console.log(err);
 	}
 }
 
 async function handleUpdateVals(v) {
+	v.splice(0, 1); // Remove the header row
 	document
-		.querySelectorAll('.sign-button')
+		.querySelectorAll('td button')
 		.forEach((btn) => btn.setAttribute('disabled', 'disabled'));
 	values = v.map((v, idx) => ({
 		name: v[1],
 		timestamp: v[0],
-		signed: v[2],
-		sheets_id: idx + 1,
+		university: v[2] || '',
+		faculty: v[3] || '',
+		phone: v[4] || '',
+		email: v[5] || '',
+		year: v[7] || v[8] || '',
+		reg_number: v[9] || '',
+		department: v[11] || '',
+		signed: v[18] || false,
+		sheets_id: idx + 2,
 	}));
 
 	document.getElementById('registrations').innerHTML = values
+		.slice()
+		.reverse()
 		.map((v) => genRow(v))
 		.join('\n');
 
 	document.querySelectorAll('.sign-button').forEach((btn) => {
 		btn.onclick = sign;
+	});
+	document.querySelectorAll('.print-button').forEach((btn) => {
+		btn.onclick = print;
+	});
+
+	document.querySelectorAll('td button').forEach((btn) => {
 		btn.removeAttribute('disabled');
 	});
 }
@@ -71,7 +104,7 @@ async function handleUpdateVals(v) {
 async function updateVals() {
 	if (document.signedIn) {
 		let v = await getValues();
-		if (v.length != values.length) {
+		if (v.length != values.length + 1) {
 			console.log('New Response!');
 			handleUpdateVals(v);
 		}
@@ -84,3 +117,8 @@ async function forceUpdateVals() {
 }
 
 setInterval(updateVals, 5000);
+
+(async () => {
+	await loadAuth();
+	await forceUpdateVals();
+})();
