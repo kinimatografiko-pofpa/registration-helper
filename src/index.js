@@ -84,6 +84,7 @@ async function removeSign(e) {
 }
 
 async function handleUpdateVals(v) {
+	const filterSigned = document.getElementById('hide-signed-switch').checked;
 	v.splice(0, 1); // Remove the header row
 	document
 		.querySelectorAll('td button')
@@ -101,6 +102,10 @@ async function handleUpdateVals(v) {
 		signed: v[18] || false,
 		sheets_id: idx + 2,
 	}));
+
+	if (filterSigned) {
+		values = values.filter((v) => !v.signed);
+	}
 
 	document.getElementById('registrations').innerHTML = values
 		.slice()
@@ -126,10 +131,10 @@ async function handleUpdateVals(v) {
 async function updateVals() {
 	if (document.signedIn) {
 		let v = await getValues();
-		if (v.length != values.length + 1) {
-			console.log('New Response!');
-			handleUpdateVals(v);
-		}
+		// if (v.length != values.length + 1 ) {
+		// console.log('New Response!');
+		handleUpdateVals(v);
+		// }
 	}
 }
 
@@ -138,7 +143,7 @@ async function forceUpdateVals() {
 	handleUpdateVals(v);
 }
 
-setInterval(updateVals, 5000);
+setInterval(updateVals, 3000);
 
 (async () => {
 	await loadAuth();
