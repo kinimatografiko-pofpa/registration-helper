@@ -170,6 +170,10 @@ async function forceUpdateVals() {
 }
 
 document.getElementById('loading-btn').onclick = forceUpdateVals;
+document.getElementById('sign-out-btn').onclick = async () => {
+	await resetAuth();
+	await loadAuth();
+};
 
 setInterval(updateVals, 3000);
 
