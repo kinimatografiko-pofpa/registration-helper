@@ -176,7 +176,7 @@ export async function loadAuth() {
 		} catch (e) {
 			console.error(e);
 			localStorage.removeItem('refresh_token');
-			oauth2SignIn();
+			await oauth2SignIn();
 		}
 		await initializeGapiClient();
 	} else {
