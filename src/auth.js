@@ -15,6 +15,10 @@ const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 let access_token = null;
 
+function wait(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function resetLocalStorage() {
 	localStorage.removeItem('refresh_token');
 	localStorage.removeItem('oauth2-test-params');
@@ -67,7 +71,7 @@ function parseQuery() {
 /*
  * Create form to request access token from Google's OAuth 2.0 server.
  */
-function oauth2SignIn() {
+async function oauth2SignIn() {
 	// Google's OAuth 2.0 endpoint for requesting an access token
 	const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
@@ -89,6 +93,7 @@ function oauth2SignIn() {
 
 	// Open the URL in a new window.
 	window.location = url;
+	await wait(1000); // wait for redirect
 }
 
 async function getRefreshToken(code) {
