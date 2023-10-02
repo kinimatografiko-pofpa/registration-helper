@@ -111,6 +111,11 @@ async function getRefreshToken(code) {
 			}),
 		});
 		let { access_token: at, refresh_token, expires_in } = await resp.json();
+		if (refresh_token == null) {
+			resetLocalStorage();
+			loadAuth();
+			throw 'no refresh token sent :('
+		}
 		access_token = at;
 		localStorage.setItem('refresh_token', refresh_token);
 		setTimeout(refreshToken, (expires_in - 1) * 1000);
