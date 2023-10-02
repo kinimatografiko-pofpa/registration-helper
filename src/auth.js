@@ -106,7 +106,7 @@ async function getRefreshToken(code) {
 				redirect_uri: REDIRECT_URI,
 				grant_type: 'authorization_code',
 				access_type: 'offline',
-				prompt: 'concent',
+				prompt: 'consent',
 				code,
 			}),
 		});
