@@ -24,7 +24,7 @@ export default async (row) => {
 		'left=0,top=0,width=800,height=600,toolbar=0,scrollbars=0,status=0'
 	);
 	winPrint.document.write(
-		`<html><head>${headIncludes}<title>Εγγραφή #123</title></head><body></body></html>`
+		`<html><head>${headIncludes}<title>Εγγραφή #${row.sheets_id -1}</title></head><body></body></html>`
 	);
 	winPrint.document.close();
 	await waitForLoad(winPrint);

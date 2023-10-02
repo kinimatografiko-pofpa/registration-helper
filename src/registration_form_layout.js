@@ -15,8 +15,8 @@ export default function (row) {
 	for (let item in formItems) {
 		formItemsHTML += `
 		<div class='d-flex'>
-			<h4 style="width: 200px; padding-right: 5px" class="text-end mr-1">${item}: </h4>
-			<h4 class='flex-fill border-3 border-bottom border-black'>${formItems[item]}</h4>
+			<h6 style="width: 200px; padding-right: 5px" class="text-end mr-1">${item}: </h6>
+			<h6 class='flex-fill border-3 border-bottom border-black'>${formItems[item]}</h6>
 		</div>
 		`;
 	}
@@ -24,31 +24,31 @@ export default function (row) {
 	return `
 <div style='font-family: "Times New Roman"; margin: 80px 40px'>
 	<div class='d-flex justify-content-between mb-5'>
-		<h3>Ακαδ. Έτος 2023-24</h3>
-		<h3>α/α Τομέα: ${row.sheets_id - 1}</h3>
+		<h4>Ακαδ. Έτος 2023-24</h4>
+		<h4>α/α Τομέα: ${row.sheets_id - 1}</h4>
 	</div>
 	<div class='text-center mx-auto mb-2'>
-		<h1><strong>ΑΙΤΗΣΗ ΕΓΓΡΑΦΗΣ</strong></h1></br>
-		<h3>Στον Κινηματογραφικό Τομέα</h3>
-		<h3>του</h3>
-		<h3>Πολιτιστικού Ομίλου Φοιτητών Πανεπιστημίου Αθηνών</h3>
+		<h2><strong>ΑΙΤΗΣΗ ΕΓΓΡΑΦΗΣ</strong></h2></br>
+		<h4>Στον Κινηματογραφικό Τομέα</h4>
+		<h4>του</h4>
+		<h4>Πολιτιστικού Ομίλου Φοιτητών Πανεπιστημίου Αθηνών</h4>
 	</div>
 	<div class='mt-5'>
 		${formItemsHTML}
 	</div>
 	<div class='my-4'>
-		<p class='fs-5'>
+		<p>
 		Ενημερώθηκα και αποδέχομαι το καταστατικό λειτουργίας του Κινηματογραφικού Τομέα και του Πολιτιστικού Ομίλου Φοιτητών Πανεπιστημίου Αθηνών (Π.Ο.Φ.Π.Α.).
 		</p>
 	</div>
-	<div class='mt-4 d-flex justify-content-between'>
+	<div class='mt-5 pt-5 d-flex justify-content-between'>
 		<div style='width: 300px'>
-			<p class='text-center fs-4'>
+			<p class='text-center fs-5'>
 			Ο αιτών/ Η αιτούσα
 			</p>
 			<p class='border-bottom border-3 border-black mt-4 pt-5'></p>
 		</div>
-		<div class='fs-4'>
+		<div class='fs-5'>
 			<p>
 			Ημερομηνία
 			</p>
