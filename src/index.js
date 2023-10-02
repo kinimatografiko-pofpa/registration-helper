@@ -160,8 +160,8 @@ async function updateVals() {
 		await handleUpdateVals(v);
 		setLoadingStatus(false);
 		// }
+		setTimeout(updateVals, 3000);
 	}
-	setTimeout(updateVals, 3000);
 }
 
 async function forceUpdateVals() {
