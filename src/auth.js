@@ -83,6 +83,7 @@ async function oauth2SignIn() {
 		state: 'try_sample_request',
 		response_type: 'code',
 		access_type: 'offline',
+		prompt:'consent'
 	};
 
 	// Construct the URL with query parameters.
