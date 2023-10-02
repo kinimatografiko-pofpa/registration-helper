@@ -177,6 +177,7 @@ document.getElementById('sign-out-btn').onclick = async () => {
 };
 
 setTimeout(updateVals, 3000);
+console.log(import.meta.env.VITE_COMMIT_HASH);
 
 (async () => {
 	await loadAuth();
