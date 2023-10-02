@@ -98,7 +98,7 @@ async function oauth2SignIn() {
 
 async function getRefreshToken(code) {
 	try {
-		let resp = await fetch('https://accounts.google.com/o/oauth2/token?', {
+		let resp = await fetch('https://www.googleapis.com/oauth2/v4/token', {
 			method: 'POST',
 			body: new URLSearchParams({
 				client_id: CLIENT_ID,
@@ -106,6 +106,7 @@ async function getRefreshToken(code) {
 				redirect_uri: REDIRECT_URI,
 				grant_type: 'authorization_code',
 				access_type: 'offline',
+				prompt: 'concent',
 				code,
 			}),
 		});
