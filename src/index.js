@@ -65,12 +65,12 @@ async function sign(e) {
 		});
 		await forceUpdateVals();
 	} catch (err) {
-		console.log(err);
 		if (err.status == 403) {
 			resetAuth();
 			await loadAuth();
 			await forceUpdateVals();
 		}
+		throw err;
 	}
 }
 
