@@ -117,6 +117,12 @@ async function getRefreshToken(code) {
 }
 
 async function getAccessToken() {
+	const refresh_token = localStorage.getItem('refresh_token');
+	if (refresh_token == null || refresh_token == '') {
+		resetLocalStorage();
+		loadAuth();
+		return;
+	}
 	try {
 		let resp = await fetch('https://accounts.google.com/o/oauth2/token?', {
 			method: 'POST',

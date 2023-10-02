@@ -160,6 +160,7 @@ async function updateVals() {
 		setLoadingStatus(false);
 		// }
 	}
+	setTimeout(updateVals, 3000);
 }
 
 async function forceUpdateVals() {
@@ -175,7 +176,7 @@ document.getElementById('sign-out-btn').onclick = async () => {
 	await loadAuth();
 };
 
-setInterval(updateVals, 3000);
+setTimeout(updateVals, 3000);
 
 (async () => {
 	await loadAuth();
