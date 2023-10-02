@@ -6,6 +6,7 @@ import printRow from './print.js';
 import { loadAuth, resetLocalStorage as resetAuth } from './auth.js';
 
 const SIGN_COLUMN = 'S';
+let stop = false;
 // const isSignedIn = false;
 
 let values = [];
@@ -21,6 +22,7 @@ async function getValues() {
 	} catch (err) {
 		document.getElementById('content').innerText = err.message;
 		if (err.status == 403) {
+			stop = true;
 			console.log('403 happened in gv');
 			resetAuth();
 			await loadAuth();
@@ -66,6 +68,7 @@ async function sign(e) {
 		await forceUpdateVals();
 	} catch (err) {
 		if (err.status == 403) {
+			stop = true;
 			resetAuth();
 			await loadAuth();
 			await forceUpdateVals();
@@ -92,6 +95,7 @@ async function removeSign(e) {
 	} catch (err) {
 		console.log(err);
 		if (err.status == 403) {
+			stop = true;
 			resetAuth();
 			await loadAuth();
 			await forceUpdateVals();
@@ -152,7 +156,7 @@ function setLoadingStatus(status) {
 }
 
 async function updateVals() {
-	if (document.signedIn) {
+	if (document.signedIn && !stop) {
 		setLoadingStatus(true);
 		let v = await getValues();
 		// if (v.length != values.length + 1 ) {
@@ -165,10 +169,12 @@ async function updateVals() {
 }
 
 async function forceUpdateVals() {
-	setLoadingStatus(true);
-	let v = await getValues();
-	await handleUpdateVals(v);
-	setLoadingStatus(false);
+	if (!stop) {
+		setLoadingStatus(true);
+		let v = await getValues();
+		await handleUpdateVals(v);
+		setLoadingStatus(false);
+	}
 }
 
 document.getElementById('loading-btn').onclick = forceUpdateVals;
@@ -177,10 +183,10 @@ document.getElementById('sign-out-btn').onclick = async () => {
 	await loadAuth();
 };
 
-// setTimeout(updateVals, 3000);
+setTimeout(updateVals, 3000);
 console.log(import.meta.env.VITE_COMMIT_HASH);
 
 (async () => {
 	await loadAuth();
-	// await forceUpdateVals();
+	await forceUpdateVals();
 })();
