@@ -113,7 +113,8 @@ async function getRefreshToken(code) {
 		let { access_token: at, refresh_token, expires_in } = await resp.json();
 		if (refresh_token == null) {
 			resetLocalStorage();
-			loadAuth();
+			console.log(await resp.json())
+			// loadAuth();
 			throw 'no refresh token sent :('
 		}
 		access_token = at;
