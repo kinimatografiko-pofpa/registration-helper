@@ -105,6 +105,7 @@ async function getRefreshToken(code) {
 				client_secret: SECRET,
 				redirect_uri: REDIRECT_URI,
 				grant_type: 'authorization_code',
+				access_type: 'offline',
 				code,
 			}),
 		});
