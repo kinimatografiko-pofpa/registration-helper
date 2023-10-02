@@ -177,10 +177,10 @@ document.getElementById('sign-out-btn').onclick = async () => {
 	await loadAuth();
 };
 
-setTimeout(updateVals, 3000);
+// setTimeout(updateVals, 3000);
 console.log(import.meta.env.VITE_COMMIT_HASH);
 
 (async () => {
 	await loadAuth();
-	await forceUpdateVals();
+	// await forceUpdateVals();
 })();
