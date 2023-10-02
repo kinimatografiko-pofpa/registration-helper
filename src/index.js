@@ -21,6 +21,7 @@ async function getValues() {
 	} catch (err) {
 		document.getElementById('content').innerText = err.message;
 		if (err.status == 403) {
+			console.log('403 happened in gv');
 			resetAuth();
 			await loadAuth();
 			await forceUpdateVals();

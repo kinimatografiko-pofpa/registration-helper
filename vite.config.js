@@ -7,4 +7,7 @@ export default defineConfig({
 	define: {
 		'import.meta.env.VITE_COMMIT_HASH': JSON.stringify(commitHash),
 	},
+	build: {
+		sourcemap: true,
+	},
 });
