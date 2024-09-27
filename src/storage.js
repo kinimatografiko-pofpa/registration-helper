@@ -9,78 +9,96 @@ export async function getEncrypted(key, password) {
 	return await decryptString(encryptedValue, password);
 }
 
+// Function to encrypt a string using a password
 async function encryptString(plaintext, password) {
-	// Generate a random salt for the PBKDF2 key derivation function
-	const salt = crypto.getRandomValues(new Uint8Array(16));
+	const enc = new TextEncoder();
 
-	// Derive an AES-GCM key from the password and salt using PBKDF2
-	const derivedKey = await crypto.subtle.importKey(
-		'pbkdf2',
-		{ hash: 'SHA-256', salt: salt, iterations: 100000 },
-		password,
-		'deriveBits',
-		['encrypt', 'decrypt']
+	// Convert the password to a key
+	const keyMaterial = await window.crypto.subtle.importKey(
+		'raw',
+		enc.encode(password),
+		{ name: 'PBKDF2' },
+		false,
+		['deriveBits', 'deriveKey']
 	);
 
-	// Generate a random initialization vector (IV) for AES-GCM
-	const iv = crypto.getRandomValues(new Uint8Array(12));
+	// Generate a salt
+	const salt = window.crypto.getRandomValues(new Uint8Array(16));
 
-	// Encrypt the plaintext using AES-GCM
-	const encryptedData = await crypto.subtle.encrypt(
+	// Derive an AES-GCM key using PBKDF2
+	const key = await window.crypto.subtle.deriveKey(
+		{
+			name: 'PBKDF2',
+			salt: salt,
+			iterations: 100000,
+			hash: 'SHA-256',
+		},
+		keyMaterial,
+		{ name: 'AES-GCM', length: 256 },
+		false,
+		['encrypt']
+	);
+
+	// Generate an IV
+	const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+	// Encrypt the plaintext
+	const ciphertext = await window.crypto.subtle.encrypt(
 		{ name: 'AES-GCM', iv: iv },
-		derivedKey,
-		new TextEncoder().encode(plaintext)
+		key,
+		enc.encode(plaintext)
 	);
 
-	// Combine the encrypted data, salt, and IV for storage or transmission
-	const ciphertext = new Uint8Array(
-		encryptedData.byteLength + salt.byteLength + iv.byteLength
+	// Combine the salt, IV, and ciphertext
+	const result = new Uint8Array(
+		salt.length + iv.length + ciphertext.byteLength
 	);
-	ciphertext.set(encryptedData);
-	ciphertext.set(salt, encryptedData.byteLength);
-	ciphertext.set(iv, encryptedData.byteLength + salt.byteLength);
+	result.set(salt, 0);
+	result.set(iv, salt.length);
+	result.set(new Uint8Array(ciphertext), salt.length + iv.length);
 
-	// Convert the ciphertext to a base64-encoded string for storage or transmission
-	return btoa(String.fromCharCode.apply(null, ciphertext));
+	// Return the result as a base64-encoded string
+	return btoa(String.fromCharCode.apply(null, result));
 }
 
-async function decryptString(ciphertext, password) {
-	// Decode the base64-encoded ciphertext
-	const ciphertextBytes = new Uint8Array(
-		atob(ciphertext)
-			.split('')
-			.map((char) => char.charCodeAt(0))
+// Function to decrypt an encrypted string using a password
+async function decryptString(encryptedData, password) {
+	const dec = new TextDecoder();
+	const data = Uint8Array.from(atob(encryptedData), (c) => c.charCodeAt(0));
+
+	// Extract salt, IV, and ciphertext
+	const salt = data.slice(0, 16);
+	const iv = data.slice(16, 28);
+	const ciphertext = data.slice(28);
+
+	const keyMaterial = await window.crypto.subtle.importKey(
+		'raw',
+		new TextEncoder().encode(password),
+		{ name: 'PBKDF2' },
+		false,
+		['deriveBits', 'deriveKey']
 	);
 
-	// Extract the encrypted data, salt, and IV from the ciphertext
-	const encryptedData = ciphertextBytes.slice(
-		0,
-		ciphertextBytes.byteLength - 32
-	);
-	const salt = ciphertextBytes.slice(
-		ciphertextBytes.byteLength - 32,
-		ciphertextBytes.byteLength - 16
-	);
-	const iv = ciphertextBytes.slice(ciphertextBytes.byteLength - 16);
-
-	// Derive an AES-GCM key from the password and salt using PBKDF2
-	const derivedKey = await crypto.subtle.importKey(
-		'pbkdf2',
-		{ hash: 'SHA-256', salt: salt, iterations: 100000 },
-		password,
-		'deriveBits',
-		['encrypt', 'decrypt']
+	const key = await window.crypto.subtle.deriveKey(
+		{
+			name: 'PBKDF2',
+			salt: salt,
+			iterations: 100000,
+			hash: 'SHA-256',
+		},
+		keyMaterial,
+		{ name: 'AES-GCM', length: 256 },
+		false,
+		['decrypt']
 	);
 
-	// Decrypt the ciphertext using AES-GCM
-	const decryptedData = await crypto.subtle.decrypt(
+	const plaintext = await window.crypto.subtle.decrypt(
 		{ name: 'AES-GCM', iv: iv },
-		derivedKey,
-		encryptedData
+		key,
+		ciphertext
 	);
 
-	// Convert the decrypted data to a string
-	return new TextDecoder().decode(decryptedData);
+	return dec.decode(plaintext);
 }
 
 //   // Example usage:

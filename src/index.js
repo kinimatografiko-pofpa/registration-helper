@@ -3,7 +3,13 @@ import './style.css';
 import genRow from './row.js';
 import printRow from './print.js';
 
-import { loadAuth, resetLocalStorage as resetAuth } from './auth.js';
+import {
+	initializeGapiClient,
+	loadAuth,
+	resetLocalStorage as resetAuth,
+} from './auth.js';
+
+import { encryptedStore, getEncrypted } from './storage.js';
 
 const SIGN_COLUMN = 'S';
 let stop = false;
@@ -11,23 +17,25 @@ let stop = false;
 
 let values = [];
 
+let SHEET_ID = null;
+
 async function getValues() {
 	let response;
 	try {
 		response = await gapi.client.sheets.spreadsheets.values.get({
-			spreadsheetId: import.meta.env.VITE_SHEET_ID,
+			spreadsheetId: SHEET_ID,
 			range: 'Form Responses 1',
 		});
 		return response.result.values;
 	} catch (err) {
 		document.getElementById('content').innerText = err.message;
-		if (err.status == 403) {
-			stop = true;
-			console.log('403 happened in gv');
-			resetAuth();
-			await loadAuth();
-			await forceUpdateVals();
-		}
+		// if (err.status == 403) {
+		// 	stop = true;
+		// 	console.log('403 happened in gv');
+		// 	resetAuth();
+		// 	await loadAuth();
+		// 	await forceUpdateVals();
+		// }
 	}
 	// return response.body
 }
@@ -56,7 +64,7 @@ async function sign(e) {
 	const range = `Form Responses 1!${SIGN_COLUMN}${row_id}:${SIGN_COLUMN}${row_id}`;
 	try {
 		let resp = await gapi.client.sheets.spreadsheets.values.update({
-			spreadsheetId: import.meta.env.VITE_SHEET_ID,
+			spreadsheetId: SHEET_ID,
 			range: range,
 			valueInputOption: 'USER_ENTERED',
 			resource: {
@@ -69,9 +77,9 @@ async function sign(e) {
 	} catch (err) {
 		if (err.status == 403) {
 			stop = true;
-			resetAuth();
-			await loadAuth();
-			await forceUpdateVals();
+			// resetAuth();
+			// await loadAuth();
+			// await forceUpdateVals();
 		}
 		throw err;
 	}
@@ -82,7 +90,7 @@ async function removeSign(e) {
 	const range = `Form Responses 1!${SIGN_COLUMN}${row_id}:${SIGN_COLUMN}${row_id}`;
 	try {
 		let resp = await gapi.client.sheets.spreadsheets.values.update({
-			spreadsheetId: import.meta.env.VITE_SHEET_ID,
+			spreadsheetId: SHEET_ID,
 			range: range,
 			valueInputOption: 'USER_ENTERED',
 			resource: {
@@ -96,9 +104,9 @@ async function removeSign(e) {
 		console.log(err);
 		if (err.status == 403) {
 			stop = true;
-			resetAuth();
-			await loadAuth();
-			await forceUpdateVals();
+			// resetAuth();
+			// await loadAuth();
+			// await forceUpdateVals();
 		}
 	}
 }
@@ -179,14 +187,33 @@ async function forceUpdateVals() {
 
 document.getElementById('loading-btn').onclick = forceUpdateVals;
 document.getElementById('sign-out-btn').onclick = async () => {
-	await resetAuth();
-	await loadAuth();
+	// await resetAuth();
+	// await loadAuth();
 };
 
 setTimeout(updateVals, 3000);
 console.log(import.meta.env.VITE_COMMIT_HASH);
 
-(async () => {
-	await loadAuth();
-	await forceUpdateVals();
-})();
+try {
+	(async () => {
+		// await loadAuth();
+		let pw = null;
+		while (pw == null || pw.length == 0) {
+			pw = prompt('Enter the password');
+		}
+		let url = null;
+		// debugger;
+		url = await getEncrypted('SHEET_URL', pw);
+		if (url == null) {
+			alert('no sheet set, enter URL to set');
+			url = prompt('Enter the sheet URL');
+			encryptedStore('SHEET_URL', url, pw);
+		}
+		SHEET_ID = new URL(url).pathname.split('/')[3];
+
+		await initializeGapiClient();
+		await forceUpdateVals();
+	})();
+} catch (err) {
+	console.error(err);
+}

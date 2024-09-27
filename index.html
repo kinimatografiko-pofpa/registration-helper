@@ -15,70 +15,81 @@
   </head>
 
   <body>
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="settingsModalLabel">Ρυθμίσεις</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <label for="sheet_url">
+                Google Sheet URL
+                <div class="d-flex">
+                  <input type="url" class="form-control" aria-label="URL">
+                  <span id="url-check">✅</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Αποθήκευση</button>
+        </div>
+      </div>
+    </div>
+
+
     <div class="m-5" id="app">
-      <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Ρυθμίσεις</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              ...
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary">Αποθήκευση</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-between">
-        <div>
-
-          <h1 class="mb-4">Εγγραφές</h1>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="hide-signed-switch">
-            <label class="form-check-label" for="flexSwitchCheckDefault">Κρύψε αιτήσεις με υπογραφή</label>
-          </div>
-
-        </div>
-        <div>
-          <button class="btn btn-primary" type="button" disabled id="loading-btn">
-            <span class="spinner-border spinner-border-sm" aria-hidden="true" id="loading-spinner"></span>
-            <span role="status">Ανανέωση</span>
-          </button>
-          <button class="btn btn-secondary" type="button" id="sign-out-btn" data-bs-toggle="modal"
-            data-bs-target="#settingsModal">
-            Ρυθμίσεις
-          </button>
-          <button class="btn btn-danger" type="button" id="sign-out-btn">
-            Αποσύνδεση
-          </button>
-        </div>
-      </div>
-
-      <table class="container table table-striped mt-5">
-        <thead class="text-strong">
-          <tr>
-            <th scope="col">Α/Α</th>
-            <th scope="col">Ημ/νία και Ώρα</th>
-            <th scope="col">Όνοματεπώνυμο</th>
-            <th scope="col">Υπεγράφη</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody id="registrations">
-
-        </tbody>
-
-    </div>
-    <pre id="content" style="white-space: pre-wrap;"></pre>
     </div>
 
+    <div class="d-flex justify-content-between">
+      <div>
 
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script type="module" src="/src/index.js"></script>
+        <h1 class="mb-4">Εγγραφές</h1>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="hide-signed-switch">
+          <label class="form-check-label" for="flexSwitchCheckDefault">Κρύψε αιτήσεις με υπογραφή</label>
+        </div>
+
+      </div>
+      <div>
+        <button class="btn btn-primary" type="button" disabled id="loading-btn">
+          <span class="spinner-border spinner-border-sm" aria-hidden="true" id="loading-spinner"></span>
+          <span role="status">Ανανέωση</span>
+        </button>
+        <button class="btn btn-secondary" type="button" id="sign-out-btn" data-bs-toggle="modal"
+          data-bs-target="#settingsModal">
+          Ρυθμίσεις
+        </button>
+        <button class="btn btn-danger" type="button" id="sign-out-btn">
+          Αποσύνδεση
+        </button>
+      </div>
+    </div>
+
+    <table class="container table table-striped mt-5">
+      <thead class="text-strong">
+        <tr>
+          <th scope="col">Α/Α</th>
+          <th scope="col">Ημ/νία και Ώρα</th>
+          <th scope="col">Όνοματεπώνυμο</th>
+          <th scope="col">Υπεγράφη</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody id="registrations">
+
+      </tbody>
+
+      </div>
+      <pre id="content" style="white-space: pre-wrap;"></pre>
+      </div>
+
+
+      <script src="https://apis.google.com/js/api.js"></script>
+      <script type="module" src="/src/index.js"></script>
   </body>
 
 </html>

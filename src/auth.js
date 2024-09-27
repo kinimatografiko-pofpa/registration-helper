@@ -28,7 +28,7 @@ export function resetLocalStorage() {
  * Callback after the API client is loaded. Loads the
  * discovery doc to initialize the API.
  */
-function initializeGapiClient() {
+export function initializeGapiClient() {
 	return new Promise((resolve, reject) => {
 		gapi.load('client', async () => {
 			try {
@@ -83,7 +83,7 @@ async function oauth2SignIn() {
 		state: 'try_sample_request',
 		response_type: 'code',
 		access_type: 'offline',
-		prompt:'consent'
+		prompt: 'consent',
 	};
 
 	// Construct the URL with query parameters.
@@ -115,9 +115,9 @@ async function getRefreshToken(code) {
 		let { access_token: at, refresh_token, expires_in } = resp;
 		if (refresh_token == null) {
 			resetLocalStorage();
-			console.log(resp)
+			console.log(resp);
 			// loadAuth();
-			throw 'no refresh token sent :('
+			throw 'no refresh token sent :(';
 		}
 		access_token = at;
 		localStorage.setItem('refresh_token', refresh_token);
