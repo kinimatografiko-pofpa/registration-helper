@@ -24,7 +24,7 @@ export default function (row) {
 	return `
 <div style='font-family: "Times New Roman"; margin: 80px 40px'>
 	<div class='d-flex justify-content-between mb-5'>
-		<h4>Ακαδ. Έτος 2023-24</h4>
+		<h4>Ακαδ. Έτος 2024-25</h4>
 		<h4>α/α Τομέα: ${row.sheets_id - 1}</h4>
 	</div>
 	<div class='text-center mx-auto mb-2'>
