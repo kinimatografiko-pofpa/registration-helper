@@ -116,7 +116,7 @@ async function handleUpdateVals(v) {
 		faculty: v[3] || '',
 		phone: v[5] || '',
 		email: v[6] || '',
-		year: v[9] || v[11] || '',
+		year: v[8] || v[11] || '',
 		reg_number: v[9] || '',
 		department: v[4] || '',
 		signed: v[18] || false,
