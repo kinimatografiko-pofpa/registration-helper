@@ -1,1 +1,14 @@
+#hidden-stats {
+	display: block;
+	opacity: 0;
+	position: absolute;
+	z-index: 1000;
+	top: 0px;
+	left: 2px;
+	color: gray;
+	padding: 10px;
+}
 
+#hidden-stats:hover {
+	opacity: 1;
+}

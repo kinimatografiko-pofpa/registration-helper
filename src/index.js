@@ -121,6 +121,7 @@ async function handleUpdateVals(v) {
 		department: v[4] || '',
 		signed: v[18] || false,
 		sheets_id: idx + 2,
+		currentStudent: v[7] === 'Φοιτώ',
 	}));
 
 	if (filterSigned) {
@@ -146,6 +147,18 @@ async function handleUpdateVals(v) {
 	document.querySelectorAll('td button').forEach((btn) => {
 		btn.removeAttribute('disabled');
 	});
+
+	// count values with university == EKPA
+	const ekpaCount = values.filter(
+		(v) =>
+			v.university ===
+				'Εθνικό & Καποδιστριακό Πανεπιστήμιο Αθηνών (ΕΚΠΑ)' &&
+			v.currentStudent == true
+	).length;
+	document.getElementById('hidden-stats').innerText = `${ekpaCount} ${(
+		(ekpaCount / values.length) *
+		100
+	).toFixed(1)}%`;
 }
 
 function setLoadingStatus(status) {
