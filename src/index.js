@@ -7,6 +7,7 @@ import { loadAuth, resetLocalStorage as resetAuth } from './auth.js';
 
 const SIGN_COLUMN = 'S';
 let stop = false;
+const INTERVAL = 6000;
 // const isSignedIn = false;
 
 let values = [];
@@ -177,7 +178,7 @@ async function updateVals() {
 		await handleUpdateVals(v);
 		setLoadingStatus(false);
 		// }
-		setTimeout(updateVals, 3000);
+		setTimeout(updateVals, INTERVAL);
 	}
 }
 
